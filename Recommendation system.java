@@ -16,30 +16,23 @@ public class RecommendationSystem {
 
     public static void main(String[] args) {
         try {
-            // Load dataset
-            String filePath = "data/dataset.csv"; // Replace with your dataset path
+            String filePath = "data/dataset.csv";
             DataModel dataModel = new FileDataModel(new File(filePath));
 
-            // Define similarity (Item-based similarity)
             ItemSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
 
-            // Define neighborhood (optional for user-based recommender)
             UserNeighborhood neighborhood = new NearestNUserNeighborhood(3, similarity, dataModel);
 
-            // Create recommender
             Recommender recommender = new GenericItemBasedRecommender(dataModel, similarity);
 
-            // Generate recommendations for a user
-            int userId = 1; // Replace with an actual user ID from your dataset
+            int userId = 1;
             List<RecommendedItem> recommendations = recommender.recommend(userId, 5);
 
-            // Display recommendations
             System.out.println("Recommendations for user ID " + userId + ":");
             for (RecommendedItem recommendation : recommendations) {
                 System.out.println("Item ID: " + recommendation.getItemID() + ", Value: " + recommendation.getValue());
             }
 
-            // Evaluate the model (optional)
             RecommenderEvaluator evaluator = new AverageAbsoluteDifferenceRecommenderEvaluator();
             double score = evaluator.evaluate(recommender, null, dataModel, 0.7, 1.0);
             System.out.println("Evaluation Score: " + score);
